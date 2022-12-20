@@ -46,13 +46,8 @@ class Colin_scraper(webdriver.Chrome):
         submit.click()
 
     async def download_pdfs(self, cookies):
-        # setup cookies
-        cookies = {}
-        for cookie in cookies:
-                name = cookie['name']
-                value = cookie['value']
-                cookies[name] = value
-
+        # setup cookies and BS
+        cookies_payload = self._setup_cookies(cookies)
         soup = self._setup_bs()
 
         # get all a_tags for pdfs
@@ -61,7 +56,7 @@ class Colin_scraper(webdriver.Chrome):
         # download all PDFs
         pdf_dict = {}
         connector = aiohttp.TCPConnector(force_close=True)
-        async with aiohttp.ClientSession(cookies=cookies, connector=connector) as session:
+        async with aiohttp.ClientSession(cookies=cookies_payload, connector=connector) as session:
             tasks = []
             # for each href setup callback to grab pdf data 
             for a_tag in all_pdf_a_tags:
@@ -79,19 +74,20 @@ class Colin_scraper(webdriver.Chrome):
                 with open(f'{const.BASE_PATH}/' + temp_pdf['text'] + f'_{temp_pdf["count"]}' '.pdf', 'wb') as pdf:
                     pdf.write(temp_pdf['response'])
 
-    # def _setup_session(self, cookies):
-    #     # setup request session with log in cookies
-    #     session = requests.Session()
-    #     for cookie in cookies:
-    #         session.cookies.set(cookie['name'], cookie['value'])
-    #     return session
-
     def _setup_bs(self):
         # setup bs
         page_source = self.page_source
         soup = bs(page_source, 'lxml')
         return soup
 
-    async def _get_pdf(session, href, text, count):
+    def _setup_cookies(self, cookies):
+        cookies_payload = {}
+        for cookie in cookies:
+                name = cookie['name']
+                value = cookie['value']
+                cookies_payload[name] = value
+        return cookies_payload
+
+    async def _get_pdf(self, session, href, text, count):
         async with session.get(href) as response:
             return {"response": await response.read(), "text": text, "count": count}
