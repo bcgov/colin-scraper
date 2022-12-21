@@ -1,6 +1,7 @@
 import os
 import aiohttp
 import asyncio
+import csv
 
 from bs4 import BeautifulSoup as bs
 from selenium import webdriver
@@ -21,6 +22,10 @@ class Colin_scraper(webdriver.Chrome):
     def open_reg_search_from_log_in(self):
         registry_search = self.find_element(By.XPATH, '//*[@id="servicesLeft"]/div/p[1]/a')
         registry_search.click()
+
+    def go_back(self):
+        back_btn = self.find_element(By.XPATH, '//*[@id="formContent"]/div[3]/div[1]/a')
+        back_btn.click()
 
     def open_log_in(self):
         self.get(const.LOG_IN_URL)
