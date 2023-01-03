@@ -139,13 +139,17 @@ class Colin_scraper(webdriver.Chrome):
             except ValueError:
                 date = datetime.datetime.strptime(date_str, '%B %d, %Y')
                 
-            print(f'curr: {date}')
             if date >= start_date and date <= end_date:
                 td_4 = row.select('tr > td')[3]
                 a_tags = td_4.find_all('a')
                 valid_tags += a_tags
-        print(len(valid_tags))
         return valid_tags
+
+    def get_next_date(self, start, end):
+        from dateutil.relativedelta import relativedelta
+        start = end
+        end += relativedelta(years=1)
+        return (start, end)
 
     async def _get_pdf(self, session, href, text, count):
         async with session.get(href) as response:
