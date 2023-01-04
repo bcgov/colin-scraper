@@ -3,6 +3,8 @@ import aiohttp
 import asyncio
 import oracledb
 import datetime
+from dateutil.relativedelta import relativedelta
+
 
 from bs4 import BeautifulSoup as bs
 from selenium import webdriver
@@ -24,9 +26,13 @@ class Colin_scraper(webdriver.Chrome):
         registry_search = self.find_element(By.XPATH, '//*[@id="servicesLeft"]/div/p[1]/a')
         registry_search.click()
 
-    def go_back(self):
-        back_btn = self.find_element(By.XPATH, '//*[@id="formContent"]/div[3]/div[1]/a')
-        back_btn.click()
+    def reset_search(self):
+        try:
+            back_btn = self.find_element(By.XPATH, '//*[@id="formContent"]/div[3]/div[1]/a')
+            back_btn.click()
+        except:
+            self.find_element(By.NAME, 'corpNum').clear()
+
 
     def open_log_in(self):
         self.get(const.LOG_IN_URL)
@@ -81,31 +87,32 @@ class Colin_scraper(webdriver.Chrome):
                 with open(f'{const.BASE_PATH}/' + f'{org_num}_' + temp_pdf['text'] + f'_{temp_pdf["count"]}' '.pdf', 'wb') as pdf:
                     pdf.write(temp_pdf['response'])
 
-    def select_starting_date_range(self, cursor):
-        cursor.execute('''SELECT DISTINCT TRUNC(EVENT_TIMESTMP) as EVENT_DATE
-                          FROM EVENT
-                          ORDER BY EVENT_DATE
-                          FETCH FIRST 2 ROWS ONLY''')
-
-        res = cursor.fetchall()
-        first_ts, = res[0]
-        last_ts, = res[1]
-        return (first_ts, last_ts)
-
-    def get_corp_nums(self, cursor):
-        cursor.execute('''select CORP_NUM from corporation
-                          where CORP_PASSWORD is not NULL
-                          order by CORP_NUM asc
-                          fetch first 2 rows only''')
-        res = cursor.fetchall()
-        return res
-
     def connect_to_oracle_db(self):
         oracledb.init_oracle_client(config_dir=r'\\SFP.IDIR.BCGOV\U177\MCAI$\Profile\Desktop\scripts\config')
         connection = oracledb.connect(user='readonly', password='t3mpt3mp', dsn='cprd.world')
         print("connected to COLIN DB")
         cur = connection.cursor()
         return cur
+
+    def fetch_events_in_range(self, cursor, start, end):
+        query = f"""select CORP_NUM, EVENT_TYP_CD from EVENT
+                   where EVENT_TIMESTMP between :start_date and :end_date and EVENT_TYP_CD='FILE'
+                   """
+        print("querying")
+        cursor.execute(query, start_date=start, end_date=end)
+        res = cursor.fetchall()
+        print("querying complete")
+        return res
+
+    def get_starting_date_range(self):
+        start = datetime.datetime(2002,1,1)
+        end = datetime.datetime(2003,1,1)
+        return(start, end)
+
+    def get_next_date(self, start, end):
+        start = end
+        end += relativedelta(years=1)
+        return (start, end)
 
     def _setup_bs(self):
         # setup bs
@@ -129,8 +136,7 @@ class Colin_scraper(webdriver.Chrome):
 
         # check if each row has date in range, if yes grab it's a_tags
         valid_tags = []
-        print(f'start: {start_date}')
-        print(f'end: {end_date}')
+
         for row in table_rows:
             date_str = row.select('tr > td')[1].get_text(strip=True)
 
@@ -144,12 +150,6 @@ class Colin_scraper(webdriver.Chrome):
                 a_tags = td_4.find_all('a')
                 valid_tags += a_tags
         return valid_tags
-
-    def get_next_date(self, start, end):
-        from dateutil.relativedelta import relativedelta
-        start = end
-        end += relativedelta(years=1)
-        return (start, end)
 
     async def _get_pdf(self, session, href, text, count):
         async with session.get(href) as response:
