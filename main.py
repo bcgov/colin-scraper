@@ -2,7 +2,7 @@ from src.scraper import Colin_scraper
 import asyncio
 import datetime
 
-TEST_END_DATE = datetime.datetime(2002, 1, 1)
+TEST_END_DATE = datetime.datetime(1901, 1, 1)
 async def main():
     with Colin_scraper() as bot:
         # connect to oracle db
@@ -21,12 +21,13 @@ async def main():
         cookies = bot.get_cookies()
         bot.open_reg_search_from_log_in()
 
+        # replace TEST_END_DATE with present date or something
         while date_tuple[0] != TEST_END_DATE:
             events = bot.fetch_events_in_range(cursor, date_tuple[0], date_tuple[1])
             print(f'start: {date_tuple[0]}')
             print(f'end: {date_tuple[1]}')
             for event in events:
-                org, *extra = event
+                org, = event
                 print(org)
                 bot.search_org(org)
                 await bot.download_pdfs(cookies, date_tuple, org)

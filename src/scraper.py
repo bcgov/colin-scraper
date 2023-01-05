@@ -5,7 +5,6 @@ import oracledb
 import datetime
 from dateutil.relativedelta import relativedelta
 
-
 from bs4 import BeautifulSoup as bs
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -45,8 +44,8 @@ class Colin_scraper(webdriver.Chrome):
         type_dropdown = Select(self.find_element(By.NAME, 'realmId'))
 
         # log in
-        username.send_keys('mcai')
-        password.send_keys('N0>{m8=6|2@o*2')
+        username.send_keys(const.STAFF_USERNAME)
+        password.send_keys(const.STAFF_PASSWORD)
         type_dropdown.select_by_value('staff')
         submit.click()
 
@@ -84,18 +83,18 @@ class Colin_scraper(webdriver.Chrome):
             pdfs = await asyncio.gather(*tasks)
             # for now write all pdf data from mem into pdf files on disk
             for temp_pdf in pdfs:
-                with open(f'{const.BASE_PATH}/' + f'{org_num}_' + temp_pdf['text'] + f'_{temp_pdf["count"]}' '.pdf', 'wb') as pdf:
+                with open(f'{const.TEMP_BASE_PATH}/' + f'{org_num}_' + temp_pdf['text'] + f'_{temp_pdf["count"]}' '.pdf', 'wb') as pdf:
                     pdf.write(temp_pdf['response'])
 
     def connect_to_oracle_db(self):
-        oracledb.init_oracle_client(config_dir=r'\\SFP.IDIR.BCGOV\U177\MCAI$\Profile\Desktop\scripts\config')
-        connection = oracledb.connect(user='readonly', password='t3mpt3mp', dsn='cprd.world')
+        oracledb.init_oracle_client(config_dir='config')
+        connection = oracledb.connect(user=const.ORACLE_USERNAME, password=const.ORACLE_PASSWORD, dsn=const.ORACLE_DSN)
         print("connected to COLIN DB")
         cur = connection.cursor()
         return cur
 
     def fetch_events_in_range(self, cursor, start, end):
-        query = f"""select CORP_NUM, EVENT_TYP_CD from EVENT
+        query = f"""select distinct CORP_NUM from EVENT
                    where EVENT_TIMESTMP between :start_date and :end_date and EVENT_TYP_CD='FILE'
                    """
         print("querying")
@@ -105,7 +104,7 @@ class Colin_scraper(webdriver.Chrome):
         return res
 
     def get_starting_date_range(self):
-        start = datetime.datetime(2002,1,1)
+        start = datetime.datetime(2000,1,1)
         end = datetime.datetime(2003,1,1)
         return(start, end)
 
