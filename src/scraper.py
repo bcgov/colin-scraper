@@ -1,9 +1,7 @@
 import os
 import aiohttp
 import asyncio
-import oracledb
 import datetime
-from dateutil.relativedelta import relativedelta
 
 from bs4 import BeautifulSoup as bs
 from selenium import webdriver
@@ -20,98 +18,6 @@ class Colin_scraper(webdriver.Chrome):
         super(Colin_scraper, self).__init__()
         self.implicitly_wait(1)
         self.maximize_window()
-
-    def open_reg_search_from_log_in(self):
-        registry_search = self.find_element(By.XPATH, '//*[@id="servicesLeft"]/div/p[1]/a')
-        registry_search.click()
-
-    def reset_search(self):
-        try:
-            back_btn = self.find_element(By.XPATH, '//*[@id="formContent"]/div[3]/div[1]/a')
-            back_btn.click()
-        except:
-            self.find_element(By.NAME, 'corpNum').clear()
-
-
-    def open_log_in(self):
-        self.get(const.LOG_IN_URL)
-
-    def log_in(self):
-        # find all log in elements 
-        username = self.find_element(By.NAME, 'user')
-        password = self.find_element(By.NAME, 'password')
-        submit = self.find_element(By.NAME, 'nextButton')
-        type_dropdown = Select(self.find_element(By.NAME, 'realmId'))
-
-        # log in
-        username.send_keys(const.STAFF_USERNAME)
-        password.send_keys(const.STAFF_PASSWORD)
-        type_dropdown.select_by_value('staff')
-        submit.click()
-
-    def search_org(self, org_num):
-        # input corpNum
-        corp_num = self.find_element(By.NAME, 'corpNum')
-        corp_num.send_keys(org_num)
-        submit = self.find_element(By.NAME, 'nextButton')
-        submit.click()
-
-    async def download_pdfs(self, cookies, date_tuple, org_num):
-        start_date, end_date = date_tuple
-
-        # setup cookies and BS
-        cookies_payload = self._setup_cookies(cookies)
-        soup = self._setup_bs()
-
-        # get all a_tags for pdfs between start_date and end_date
-        all_pdf_a_tags = self._find_valid_tags(soup, start_date, end_date)
-
-        # download all PDFs
-        pdf_dict = {}
-        connector = aiohttp.TCPConnector(force_close=True)
-        async with aiohttp.ClientSession(cookies=cookies_payload, connector=connector) as session:
-            tasks = []
-            # for each href setup callback to grab pdf
-            for a_tag in all_pdf_a_tags:
-                text = a_tag.text
-                count = get_pdf_count(pdf_dict, text)
-                href = a_tag.get('href')
-                href = 'https://www.corporateonline.gov.bc.ca' + href
-                tasks.append(asyncio.ensure_future(self._get_pdf(session, href, text, count)))
-
-            # send requests to get all pdfs in parallel
-            pdfs = await asyncio.gather(*tasks)
-            # for now write all pdf data from mem into pdf files on disk
-            for temp_pdf in pdfs:
-                with open(f'{const.TEMP_BASE_PATH}/' + f'{org_num}_' + temp_pdf['text'] + f'_{temp_pdf["count"]}' '.pdf', 'wb') as pdf:
-                    pdf.write(temp_pdf['response'])
-
-    def connect_to_oracle_db(self):
-        oracledb.init_oracle_client(config_dir='config')
-        connection = oracledb.connect(user=const.ORACLE_USERNAME, password=const.ORACLE_PASSWORD, dsn=const.ORACLE_DSN)
-        print("connected to COLIN DB")
-        cur = connection.cursor()
-        return cur
-
-    def fetch_events_in_range(self, cursor, start, end):
-        query = f"""select distinct CORP_NUM from EVENT
-                   where EVENT_TIMESTMP between :start_date and :end_date and EVENT_TYP_CD='FILE'
-                   """
-        print("querying")
-        cursor.execute(query, start_date=start, end_date=end)
-        res = cursor.fetchall()
-        print("querying complete")
-        return res
-
-    def get_starting_date_range(self):
-        start = datetime.datetime(2000,1,1)
-        end = datetime.datetime(2003,1,1)
-        return(start, end)
-
-    def get_next_date(self, start, end):
-        start = end
-        end += relativedelta(years=1)
-        return (start, end)
 
     def _setup_bs(self):
         # setup bs
@@ -153,3 +59,70 @@ class Colin_scraper(webdriver.Chrome):
     async def _get_pdf(self, session, href, text, count):
         async with session.get(href) as response:
             return {"response": await response.read(), "text": text, "count": count}
+
+    def open_log_in(self):
+        self.get(const.LOG_IN_URL)
+
+    def log_in(self):
+        # find all log in elements 
+        username = self.find_element(By.NAME, 'user')
+        password = self.find_element(By.NAME, 'password')
+        submit = self.find_element(By.NAME, 'nextButton')
+        type_dropdown = Select(self.find_element(By.NAME, 'realmId'))
+
+        # log in
+        username.send_keys(const.STAFF_USERNAME)
+        password.send_keys(const.STAFF_PASSWORD)
+        type_dropdown.select_by_value('staff')
+        submit.click()
+
+    def open_reg_search_from_log_in(self):
+        registry_search = self.find_element(By.XPATH, '//*[@id="servicesLeft"]/div/p[1]/a')
+        registry_search.click()
+
+    def search_org(self, org_num):
+        # input corpNum
+        corp_num = self.find_element(By.NAME, 'corpNum')
+        corp_num.send_keys(org_num)
+        submit = self.find_element(By.NAME, 'nextButton')
+        submit.click()
+
+    def reset_search(self):
+        # TODO: should probably wrap all these selenium things in a try-catch
+        try:
+            back_btn = self.find_element(By.XPATH, '//*[@id="formContent"]/div[3]/div[1]/a')
+            back_btn.click()
+        except:
+            self.find_element(By.NAME, 'corpNum').clear()
+
+    async def download_pdfs(self, cookies, date_tuple, org_num):
+        start_date, end_date = date_tuple
+
+        # setup cookies and BS
+        cookies_payload = self._setup_cookies(cookies)
+        soup = self._setup_bs()
+
+        # get all a_tags for pdfs between start_date and end_date
+        all_pdf_a_tags = self._find_valid_tags(soup, start_date, end_date)
+
+        # download all PDFs
+        pdf_dict = {}
+        connector = aiohttp.TCPConnector(force_close=True)
+        async with aiohttp.ClientSession(cookies=cookies_payload, connector=connector) as session:
+            tasks = []
+            # for each href setup callback to grab pdf
+            for a_tag in all_pdf_a_tags:
+                text = a_tag.text
+                count = get_pdf_count(pdf_dict, text)
+                href = a_tag.get('href')
+                href = 'http://gaucho.bcgov:7777' + href
+                tasks.append(asyncio.ensure_future(self._get_pdf(session, href, text, count)))
+
+            # send requests to get all pdfs in parallel
+            pdfs = await asyncio.gather(*tasks)
+            # for now write all pdf data from mem into pdf files on disk
+            for temp_pdf in pdfs:
+                with open(f'{const.TEMP_BASE_PATH}/' + f'{org_num}_' + temp_pdf['text'] + f'_{temp_pdf["count"]}' '.pdf', 'wb') as pdf:
+                    pdf.write(temp_pdf['response'])
+
+    
