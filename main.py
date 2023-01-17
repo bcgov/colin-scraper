@@ -3,10 +3,9 @@ import asyncio
 from src.scraper import Colin_scraper
 from src.crawler import Colin_crawler
 
-# TODO: should create some setup files so that it's easy to get all dependencies installed
 # TODO: fix query
 # TODO: find way around 10:45 - 6:00 COLIN lockout
-# TODO: setup python virtualenv for to make it easier to run
+# TODO: setup python virtualenv to make bot easier to run
 # TODO: make path to webdriver relative
 # TODO: make code more rigourous by adding exceptions/exception handling 
 
