@@ -1,3 +1,20 @@
+# Copyright © 2019 Province of British Columbia
+#
+# Licensed under the Apache License, Version 2.0 (the 'License');
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an 'AS IS' BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+"""This module manages behaviour of the COLIN scraper
+
+Defines PDF downloading and traversing through COLIN UI
+"""
 import os
 import aiohttp
 import asyncio
@@ -12,20 +29,24 @@ from . import constants as const
 from .utils import get_pdf_count
 
 class Colin_scraper(webdriver.Chrome):
+    """Manages all aspects of the COLIN screenscraper object"""
+
     def __init__(self, driver_path=const.DRIVER_PATH):
+        """Initialize and return a scraper instance"""
         self.driver_path = driver_path
         os.environ['PATH'] += self.driver_path
         super(Colin_scraper, self).__init__()
-        self.implicitly_wait(1)
+        self.implicitly_wait(2)
         self.maximize_window()
 
     def _setup_bs(self):
-        # setup bs
+        """Initialize beautifulsoup using current page of webdriver"""
         page_source = self.page_source
         soup = bs(page_source, 'lxml')
         return soup
 
     def _setup_cookies(self, cookies):
+        """Return webdriver cookies as a payload that aiohttp can read"""
         # create cookies dict for session
         cookies_payload = {}
         for cookie in cookies:
@@ -35,6 +56,7 @@ class Colin_scraper(webdriver.Chrome):
         return cookies_payload
 
     def _find_valid_tags(self, soup, start_date, end_date):
+        """Return all a-tags within start_date and end_date for an org"""
         # get all table rows
         table_rows = soup.find_all('tr', {"class": "displayTableDataOdd"})
         table_rows += soup.find_all('tr', {"class": "displayTableDataEven"})
@@ -57,13 +79,16 @@ class Colin_scraper(webdriver.Chrome):
         return valid_tags
 
     async def _get_pdf(self, session, href, text, count):
+        """Return PDF data with a-tag text and count"""
         async with session.get(href) as response:
             return {"response": await response.read(), "text": text, "count": count}
 
     def open_log_in(self):
+        """Open the COLIN UI log in page"""
         self.get(const.LOG_IN_URL)
 
     def log_in(self):
+        """Log into COLIN using staff credentials"""
         # find all log in elements 
         username = self.find_element(By.NAME, 'user')
         password = self.find_element(By.NAME, 'password')
@@ -77,17 +102,19 @@ class Colin_scraper(webdriver.Chrome):
         submit.click()
 
     def open_reg_search_from_log_in(self):
+        """Open registry search page after logging in"""
         registry_search = self.find_element(By.XPATH, '//*[@id="servicesLeft"]/div/p[1]/a')
         registry_search.click()
 
     def search_org(self, org_num):
-        # input corpNum
+        """Input org_num into registry search"""
         corp_num = self.find_element(By.NAME, 'corpNum')
         corp_num.send_keys(org_num)
         submit = self.find_element(By.NAME, 'nextButton')
         submit.click()
 
     def reset_search(self):
+        """Return to registry search from org page"""
         # TODO: should probably wrap all these selenium things in a try-catch
         try:
             back_btn = self.find_element(By.XPATH, '//*[@id="formContent"]/div[3]/div[1]/a')
@@ -96,6 +123,7 @@ class Colin_scraper(webdriver.Chrome):
             self.find_element(By.NAME, 'corpNum').clear()
 
     async def download_pdfs(self, cookies, date_tuple, org_num):
+        """Download all PDFs within date range for an org"""
         start_date, end_date = date_tuple
 
         # setup cookies and BS
@@ -124,5 +152,3 @@ class Colin_scraper(webdriver.Chrome):
             for temp_pdf in pdfs:
                 with open(f'{const.TEMP_BASE_PATH}/' + f'{org_num}_' + temp_pdf['text'] + f'_{temp_pdf["count"]}' '.pdf', 'wb') as pdf:
                     pdf.write(temp_pdf['response'])
-
-    
