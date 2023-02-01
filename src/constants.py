@@ -32,6 +32,6 @@ LOG_IN_URL = 'http://gaucho.bcgov:7777/corporateonline/colin/signon/start.do?act
 
 # TODO: paths need to be changed to relative paths
 CONFIG_PATH = 'config'
-DRIVER_PATH = r'\\SFP.IDIR.BCGOV\U177\MCAI$\Profile\Desktop\Documents\Chrome WebDriver'
+DRIVER_PATH = r'Chrome WebDriver\chromedriver.exe'
 TEMP_BASE_PATH = r"C:\Users\MCAI\Desktop\Test PDFs"
 UNWANTED_TAGS = ['MAIL', 'EMAIL']
