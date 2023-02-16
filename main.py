@@ -5,7 +5,6 @@ from src.crawler import Colin_crawler
 
 # TODO: fix query
 # TODO: find way around 10:45 - 6:00 COLIN lockout
-# TODO: setup python virtualenv to make bot easier to run
 # TODO: make code more rigourous by adding exceptions/exception handling 
 
 async def main():

@@ -24,6 +24,9 @@ from bs4 import BeautifulSoup as bs
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 from . import constants as const
 from .utils import get_pdf_count
@@ -33,11 +36,13 @@ class Colin_scraper(webdriver.Chrome):
 
     def __init__(self, driver_path=const.DRIVER_PATH):
         """Initialize and return a scraper instance"""
+        chrome_options = Options()
+        chrome_options.add_argument("--headless")
         self.driver_path = driver_path
         os.environ['PATH'] += self.driver_path
-        super(Colin_scraper, self).__init__()
-        self.implicitly_wait(2)
-        self.maximize_window()
+        super(Colin_scraper, self).__init__(options=chrome_options)
+        self.driver_wait = WebDriverWait(self, 10)
+        self.implicitly_wait(5)
 
     def _setup_bs(self):
         """Initialize beautifulsoup using current page of webdriver"""
@@ -90,6 +95,9 @@ class Colin_scraper(webdriver.Chrome):
     def log_in(self):
         """Log into COLIN using staff credentials"""
         # find all log in elements 
+        self.driver_wait.until(
+            EC.presence_of_element_located((By.NAME, 'user'))
+        )
         username = self.find_element(By.NAME, 'user')
         password = self.find_element(By.NAME, 'password')
         submit = self.find_element(By.NAME, 'nextButton')
@@ -103,11 +111,17 @@ class Colin_scraper(webdriver.Chrome):
 
     def open_reg_search_from_log_in(self):
         """Open registry search page after logging in"""
+        self.driver_wait.until(
+            EC.presence_of_element_located((By.XPATH, '//*[@id="servicesLeft"]/div/p[1]/a'))
+        )
         registry_search = self.find_element(By.XPATH, '//*[@id="servicesLeft"]/div/p[1]/a')
         registry_search.click()
 
     def search_org(self, org_num):
         """Input org_num into registry search"""
+        self.driver_wait.until(
+            EC.presence_of_element_located((By.NAME, 'corpNum'))
+        )
         corp_num = self.find_element(By.NAME, 'corpNum')
         corp_num.send_keys(org_num)
         submit = self.find_element(By.NAME, 'nextButton')
@@ -117,9 +131,15 @@ class Colin_scraper(webdriver.Chrome):
         """Return to registry search from org page"""
         # TODO: should probably wrap all these selenium things in a try-catch
         try:
+            self.driver_wait.until(
+                EC.presence_of_element_located((By.XPATH, '//*[@id="formContent"]/div[3]/div[1]/a'))
+            )
             back_btn = self.find_element(By.XPATH, '//*[@id="formContent"]/div[3]/div[1]/a')
             back_btn.click()
         except:
+            self.driver_wait.until(
+                EC.presence_of_element_located((By.NAME, 'corpNum'))
+            )
             self.find_element(By.NAME, 'corpNum').clear()
 
     async def download_pdfs(self, cookies, date_tuple, org_num):
