@@ -47,6 +47,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends alien libaio1 w
     alien -i oracle-instantclient-basic-21.9.0.0.0-1.el8.x86_64.rpm && \
     alien -i oracle-instantclient-basic-21.9.0.0.0-1.x86_64.rpm
 ENV LD_LIBRARY_PATH="/usr/lib/oracle/21.9/client64/lib:${LD_LIBRARY_PATH}"
+ENV TNS_ADMIN="/app:${TNS_ADMIN}"
 
 # install google chrome
 RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -

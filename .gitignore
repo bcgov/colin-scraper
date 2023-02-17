@@ -1,2 +1,4 @@
-config/
-.env
+config/tnsnames.ora
+venv/
+COLIN_screenscraper.egg-info/
+**.env

@@ -32,5 +32,5 @@ LOG_IN_URL = 'http://gaucho.bcgov:7777/corporateonline/colin/signon/start.do?act
 
 CONFIG_PATH = r'.\config'
 DRIVER_PATH = r'.\chrome-web-driver\chromedriver.exe'
-TEMP_BASE_PATH = r".\Test Outputs"
+TEMP_BASE_PATH = r".\test-outputs"
 UNWANTED_TAGS = ['MAIL', 'EMAIL']
