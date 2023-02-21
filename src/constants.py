@@ -31,6 +31,6 @@ REGISTRY_SEARCH_URL = 'http://gaucho.bcgov:7777/corporateonline/colin/search/sea
 LOG_IN_URL = 'http://gaucho.bcgov:7777/corporateonline/colin/signon/start.do?action=login'
 
 CONFIG_PATH = r'.\config'
-DRIVER_PATH = r'.\chrome-web-driver\chromedriver.exe'
+DRIVER_PATH = r'.\app\chromedriver'
 TEMP_BASE_PATH = r".\test-outputs"
 UNWANTED_TAGS = ['MAIL', 'EMAIL']

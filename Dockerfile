@@ -39,20 +39,24 @@ RUN apt-get update && apt-get install -y --no-install-recommends alien libaio1 w
     alien -i oracle-instantclient-basic-21.9.0.0.0-1.el8.x86_64.rpm && \
     alien -i oracle-instantclient-basic-21.9.0.0.0-1.x86_64.rpm && \
     cp /app/config/tnsnames.ora /usr/lib/oracle/21/client64/lib/network/admin
-    
+
 ENV LD_LIBRARY_PATH="/usr/lib/oracle/21/client64/lib:${LD_LIBRARY_PATH}"
 ENV TNS_ADMIN="/usr/lib/oracle/21/client64/lib/network/admin:${TNS_ADMIN}"
 
 # install google chrome
 RUN wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-RUN apt-get install ./google-chrome-stable_current_amd64.deb
+RUN apt-get install -y ./google-chrome-stable_current_amd64.deb
 
 # install chromedriver
+ENV CHROMEDRIVER_DIR /app/chromedriver
+RUN mkdir $CHROMEDRIVER_DIR
+
 RUN apt-get install -yqq unzip && \
-    wget -O /tmp/chromedriver.zip http://chromedriver.storage.googleapis.com/`curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE`/chromedriver_linux64.zip && \
-    unzip /tmp/chromedriver.zip chromedriver -d /app/chrome-web-driver
+    wget -q --continue -P -O /tmp/chromedriver.zip http://chromedriver.storage.googleapis.com/`curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE`/chromedriver_linux64.zip && \
+    unzip /tmp/chromedriver.zip* -d $CHROMEDRIVER_DIR
 
 EXPOSE 3000
 
 ENV PYTHONPATH=/app
+ENV PATH $CHROMEDRIVER_DIR:$PATH
 CMD ["python", "main.py"]

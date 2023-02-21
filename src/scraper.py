@@ -37,7 +37,12 @@ class Colin_scraper(webdriver.Chrome):
     def __init__(self, driver_path=const.DRIVER_PATH):
         """Initialize and return a scraper instance"""
         chrome_options = Options()
+        chrome_options.add_argument("--no-sandbox")
+        chrome_options.add_argument('--disable-dev-shm-usage')
         chrome_options.add_argument("--headless")
+        chrome_prefs = {}
+        chrome_prefs["profile.default_content_settings"] = {"images": 2}
+        chrome_options.experimental_options["prefs"] = chrome_prefs
         self.driver_path = driver_path
         os.environ['PATH'] += self.driver_path
         super(Colin_scraper, self).__init__(options=chrome_options)
