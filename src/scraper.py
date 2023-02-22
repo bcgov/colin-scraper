@@ -31,21 +31,18 @@ from selenium.webdriver.support import expected_conditions as EC
 from . import constants as const
 from .utils import get_pdf_count
 
-class Colin_scraper(webdriver.Chrome):
+class Colin_scraper(webdriver.Remote):
     """Manages all aspects of the COLIN screenscraper object"""
 
     def __init__(self, driver_path=const.DRIVER_PATH):
         """Initialize and return a scraper instance"""
         chrome_options = Options()
         chrome_options.add_argument("--no-sandbox")
-        chrome_options.add_argument('--disable-dev-shm-usage')
         chrome_options.add_argument("--headless")
-        chrome_prefs = {}
-        chrome_prefs["profile.default_content_settings"] = {"images": 2}
-        chrome_options.experimental_options["prefs"] = chrome_prefs
+        chrome_options.add_argument('--disable-dev-shm-usage') # probablt shouldn't do this, don't wanna use all memory
         self.driver_path = driver_path
         os.environ['PATH'] += self.driver_path
-        super(Colin_scraper, self).__init__(options=chrome_options)
+        super(Colin_scraper, self).__init__("http://selenium:4444/wd/hub", options=chrome_options)
         self.driver_wait = WebDriverWait(self, 10)
         self.implicitly_wait(5)
 

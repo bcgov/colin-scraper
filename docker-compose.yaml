@@ -1,0 +1,21 @@
+services:
+  app:
+    image: colin-scraper
+    ports: 
+      - 3000:3000
+    working_dir: /app
+    volumes:
+      - ./:/app
+    environment:
+      STAFF_USERNAME: "mcai"
+      STAFF_PASSWORD:  "N0>{m8=6|2@o*2"
+      ORACLE_DB_USERNAME: "readonly"
+      ORACLE_DB_PASSWORD: "t3mpt3mp"
+      ORACLE_DB_DSN: "cprd.world"
+      DATE_RANGE_START: "2002/01/01"
+      DATE_RANGE_END: "2003/01/01"
+      FINAL_END_DATE: "2023/01/05"
+  selenium:
+    image: selenium/standalone-chrome
+    ports:
+      - 4444:4444
