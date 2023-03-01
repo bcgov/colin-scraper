@@ -27,8 +27,7 @@ INIT_START_DATE = os.getenv('DATE_RANGE_START')
 INIT_END_DATE = os.getenv('DATE_RANGE_END')
 FINAL_END_DATE = os.getenv('FINAL_END_DATE')
 CONFIG_PATH = os.getenv('CONFIG_PATH')
-DRIVER_PATH = os.getenv('DRIVER_PATH')
-TEMP_BASE_PATH = os.getenv('TEMP_BASE_PATH')
+TEMP_BASE_PATH = os.getcwd() + os.getenv('TEMP_BASE_PATH')
 
 REGISTRY_SEARCH_URL = 'http://gaucho.bcgov:7777/corporateonline/colin/search/searchAction.do?action=setup&org.apache.struts.taglib.html.TOKEN=c2cbbb166a6e92f91d38f0dcf48bb866'
 LOG_IN_URL = 'http://gaucho.bcgov:7777/corporateonline/colin/signon/start.do?action=login'
