@@ -1,0 +1,1 @@
+kubectl create deployment colin-scraper-deployment --image=matthewcai/colin-scraper

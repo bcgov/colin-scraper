@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: Pod
+metadata: 
+  name: colin-scraper-job
+spec:
+  containers:       
+  - name: colin-scraper
+    image: matthewcai/colin-scraper
+    env:
+    - name: STAFF_USERNAME
+      valueFrom:
+        configMapKeyRef:
+          name: colin-scraper-config
+          key: STAFF_USERNAME
+    - name: STAFF_PASSWORD
+      valueFrom:
+        configMapKeyRef:
+          name: colin-scraper-config
+          key: STAFF_PASSWORD
+    - name: ORACLE_DB_USERNAME
+      valueFrom:
+        configMapKeyRef:
+          name: colin-scraper-config
+          key: ORACLE_DB_USERNAME
+    - name: ORACLE_DB_PASSWORD
+      valueFrom:
+        configMapKeyRef:
+          name: colin-scraper-config
+          key: ORACLE_DB_PASSWORD
+    - name: ORACLE_DB_DSN
+      valueFrom:
+        configMapKeyRef:
+          name: colin-scraper-config
+          key: ORACLE_DB_DSN
+    - name: DATE_RANGE_START
+      valueFrom:
+        configMapKeyRef:
+          name: colin-scraper-config
+          key: DATE_RANGE_START
+    - name: DATE_RANGE_END
+      valueFrom:
+        configMapKeyRef:
+          name: colin-scraper-config
+          key: DATE_RANGE_END
+    - name: FINAL_END_DATE 
+      valueFrom:
+        configMapKeyRef:
+          name: colin-scraper-config
+          key: FINAL_END_DATE 
