@@ -7,6 +7,7 @@ from src.crawler import Colin_crawler
 # TODO: find way around 10:45 - 6:00 COLIN lockout
 
 async def main():
+    print("starting up scraper")
     crawler = Colin_crawler()
     with Colin_scraper() as bot:
         date_tuple = crawler.get_initial_date_range()

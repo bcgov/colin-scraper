@@ -1,3 +1,4 @@
+# compose file for local development
 version: '3'
 services:
   app:

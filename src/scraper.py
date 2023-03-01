@@ -37,6 +37,7 @@ class Colin_scraper(webdriver.Remote):
 
     def __init__(self):
         """Initialize and return a scraper instance"""
+        print("initializing scraper")
         chrome_options = Options()
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--headless")
@@ -46,7 +47,7 @@ class Colin_scraper(webdriver.Remote):
                 super(Colin_scraper, self).__init__("http://selenium:4444/wd/hub", options=chrome_options)
                 chromeOnline = True
             except Exception as e: 
-                print("could not connect to chrome, trying again")
+                print("could not connect to remote chrome driver, trying again")
                 time.sleep(1)
         self.driver_wait = WebDriverWait(self, 10)
         self.implicitly_wait(5)
