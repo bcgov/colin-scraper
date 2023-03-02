@@ -36,9 +36,9 @@ class Colin_crawler():
 
     def _connect_to_oracle_db(self):
         """Connect to COLIN Oracle DB."""
-        print("connecting to COLIN DB")
+        print("connecting to COLIN DB", flush=True)
         connection = oracledb.connect(user=const.ORACLE_USERNAME, password=const.ORACLE_PASSWORD, dsn=const.ORACLE_DSN)
-        print("connected to COLIN DB")
+        print("connected to COLIN DB", flush=True)
         cur = connection.cursor()
         return cur
 

@@ -5,5 +5,5 @@ kubectl create --filename=./deployment/selenium-hub-deployment.yaml
 # Start Service
 kubectl create --filename=./deployment/selenium-hub-service.yaml
 # Start Selenium Nodes
-sleep 30s
+sleep 40s
 kubectl create --filename=./deployment/selenium-node-chrome.yaml

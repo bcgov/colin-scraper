@@ -1,1 +1,1 @@
-kubectl create deployment colin-scraper-deployment --image=matthewcai/colin-scraper
+kubectl apply -f deployment/colin-scraper-deployment.yaml

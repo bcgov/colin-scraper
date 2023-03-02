@@ -15,7 +15,6 @@
 
 Defines PDF downloading and traversing through COLIN UI
 """
-import os
 import time
 import aiohttp
 import asyncio
@@ -23,6 +22,7 @@ import datetime
 
 from bs4 import BeautifulSoup as bs
 from selenium import webdriver
+from selenium.webdriver import DesiredCapabilities
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.chrome.options import Options
@@ -37,18 +37,14 @@ class Colin_scraper(webdriver.Remote):
 
     def __init__(self):
         """Initialize and return a scraper instance"""
-        print("initializing scraper")
+        print("initializing scraper", flush=True)
         chrome_options = Options()
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--headless")
-        chromeOnline = False
-        while not chromeOnline:
-            try:
-                super(Colin_scraper, self).__init__("http://selenium:4444/wd/hub", options=chrome_options)
-                chromeOnline = True
-            except Exception as e: 
-                print("could not connect to remote chrome driver, trying again")
-                time.sleep(1)
+        super(Colin_scraper, self).__init__(command_executor="http://selenium-hub:4444/wd/hub", 
+                                            options=chrome_options, 
+                                            desired_capabilities=getattr(DesiredCapabilities, "CHROME"))
+        time.sleep(1)
         self.driver_wait = WebDriverWait(self, 10)
         self.implicitly_wait(5)
 
