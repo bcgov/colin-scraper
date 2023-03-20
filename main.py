@@ -7,7 +7,7 @@ from src.crawler import Colin_crawler
 # TODO: find way around 10:45 - 6:00 COLIN lockout
 
 async def main():
-    print("starting up scraper")
+    print("starting up application", flush=True)
     crawler = Colin_crawler()
     with Colin_scraper() as bot:
         date_tuple = crawler.get_initial_date_range()
@@ -19,12 +19,12 @@ async def main():
 
         while date_tuple[1] <= end_date:
             events = crawler.fetch_events_in_range(date_tuple[0], date_tuple[1])
-            print(f'start: {date_tuple[0]}')
-            print(f'end: {date_tuple[1]}')
+            print(f'start: {date_tuple[0]}', flush=True)
+            print(f'end: {date_tuple[1]}', flush=True)
             
             for event in events:
                 org_num, = event
-                print(org_num)
+                print(org_num, flush=True)
                 bot.search_org(org_num)
                 await bot.download_pdfs(cookies, date_tuple, org_num)
                 bot.reset_search()
