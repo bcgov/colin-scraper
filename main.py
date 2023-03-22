@@ -23,10 +23,11 @@ async def main():
             print(f'end: {date_tuple[1]}', flush=True)
             
             for event in events:
-                org_num, = event
+                org_num, event_ids_str = event
+                event_ids = list(event_ids_str.split(","))
                 print(org_num, flush=True)
                 bot.search_org(org_num)
-                await bot.download_pdfs(cookies, date_tuple, org_num)
+                await bot.download_pdfs(cookies, date_tuple, org_num, event_ids)
                 bot.reset_search()
 
             date_tuple = crawler.get_next_date(date_tuple[0], date_tuple[1])

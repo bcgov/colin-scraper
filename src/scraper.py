@@ -87,10 +87,10 @@ class Colin_scraper(webdriver.Remote):
                 valid_tags += a_tags
         return valid_tags
 
-    async def _get_pdf(self, session, href, text, count):
+    async def _get_pdf(self, session, href, text, count, event_id):
         """Return PDF data with a-tag text and count"""
         async with session.get(href) as response:
-            return {"response": await response.read(), "text": text, "count": count}
+            return {"response": await response.read(), "text": text, "count": count, "event_id": event_id}
 
     def open_log_in(self):
         """Open the COLIN UI log in page"""
@@ -146,7 +146,7 @@ class Colin_scraper(webdriver.Remote):
             )
             self.find_element(By.NAME, 'corpNum').clear()
 
-    async def download_pdfs(self, cookies, date_tuple, org_num):
+    async def download_pdfs(self, cookies, date_tuple, org_num, event_ids):
         """Download all PDFs within date range for an org"""
         start_date, end_date = date_tuple
 
@@ -165,14 +165,15 @@ class Colin_scraper(webdriver.Remote):
             # for each href setup callback to grab pdf
             for a_tag in all_pdf_a_tags:
                 text = a_tag.text
+                event_id = event_ids.pop(0)
                 count = get_pdf_count(pdf_dict, text)
                 href = a_tag.get('href')
                 href = 'http://gaucho.bcgov:7777' + href
-                tasks.append(asyncio.ensure_future(self._get_pdf(session, href, text, count)))
+                tasks.append(asyncio.ensure_future(self._get_pdf(session, href, text, count, event_id)))
 
             # send requests to get all pdfs in parallel
             pdfs = await asyncio.gather(*tasks)
             # for now write all pdf data from mem into pdf files on disk
             for temp_pdf in pdfs:
-                with open(f'{const.TEMP_BASE_PATH}/' + f'{org_num}_' + temp_pdf['text'] + f'_{temp_pdf["count"]}' + '.pdf', 'wb') as pdf:
+                with open(f'{const.TEMP_BASE_PATH}/' + f'{org_num}_' + f'{temp_pdf["event_id"]}_' + temp_pdf['text'] + f'_{temp_pdf["count"]}' + '.pdf', 'wb') as pdf:
                     pdf.write(temp_pdf['response'])

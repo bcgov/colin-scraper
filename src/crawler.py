@@ -44,8 +44,10 @@ class Colin_crawler():
 
     def fetch_events_in_range(self, start, end):
         """Fetch events from Oracle DB within a datetime range."""
-        query = """select distinct CORP_NUM from EVENT
+        query = """select CORP_NUM, listagg(EVENT_ID, ',') 
+                   within group (order by EVENT_ID) event_ids from EVENT
                    where EVENT_TIMESTMP between :start_date and :end_date and EVENT_TYP_CD='FILE'
+                   group by CORP_NUM
                    """
         print("querying")
         self.cursor.execute(query, start_date=start, end_date=end)
