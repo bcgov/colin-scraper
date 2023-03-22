@@ -2,7 +2,7 @@
 Web scraper to scrape COLIN-UI and download all the filing outputs of legacy businesses and transfer them into LEAR  
 
 # Prerequisites
-setup .env, configMap.yaml, and tnsnames.ora files
+setup .env, configMap.yaml, and tnsnames.ora files, templates are in repo
 Python 10+
 
 # Running the app
