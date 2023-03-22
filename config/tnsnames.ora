@@ -1,0 +1,5 @@
+cprd.world = 
+    (DESCRIPTION =
+        (ADDRESS=(PROTOCOL = TCP)(HOST = <your_host>)(PORT = <your_port>))
+        (CONNECT_DATA =(SID = <sid>))
+    )
