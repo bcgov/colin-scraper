@@ -1,4 +1,7 @@
+config/tnsnames.ora
 venv/
 COLIN_screenscraper.egg-info/
+**.env
 __pycache__/
 *.py[cod]
+scripts/deployment/configMap.yaml
