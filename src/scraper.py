@@ -162,7 +162,7 @@ class Colin_scraper(webdriver.Remote):
         connector = aiohttp.TCPConnector(force_close=True)
         async with aiohttp.ClientSession(cookies=cookies_payload, connector=connector) as session:
             tasks = []
-            # for each href setup callback to grab pdf
+            # for each href, setup callback to grab pdf
             for a_tag in all_pdf_a_tags:
                 text = a_tag.text
                 event_id = event_ids.pop(0)
