@@ -4,12 +4,14 @@ Web scraper to scrape COLIN-UI and download all the filing outputs of legacy bus
 # Prerequisites
 fill [.env](https://github.com/MatthewCai2002/env_templates/blob/master/.env), [configMap.yaml](https://github.com/MatthewCai2002/env_templates/blob/master/configMap.yaml), and [tnsnames.ora](https://github.com/MatthewCai2002/env_templates/blob/master/tnsnames.ora) files with environment variables  
 Python 10+
+linux environment to clone and run app
 
 # Running the app
-1. create tnsnames.ora in config with connection credentials to connect to COLIN Oracle DB
-2. run make setup to install requirements and setup venv
-3. set command_executor in scraper.py to "http://selenium:4444/wd/hub"
-4. run docker compose up in root directory
+1. create config folder with a tnsnames.ora file with connection credentials to connect to COLIN Oracle DB
+2. place filled configMap.yaml file in scripts/deployment
+3. run make setup to install requirements and setup venv
+4. set command_executor in scraper.py to "http://selenium:4444/wd/hub"
+5. run docker compose up in root directory
 
 # Kubernetes Deployment
 1. start kubernetes cluster
