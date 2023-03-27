@@ -33,3 +33,11 @@ install-dev: ## Install local application
 	. venv/bin/activate ; \
 	pip install -Ur requirements.txt; \
 	pip install -e .
+
+#################################################################################
+# COMMANDS -- Docker Image                                                      #
+#################################################################################
+
+image: ## push local image to DockerHub
+	docker build -t matthewcai/colin-scraper .
+	docker push matthewcai/colin-scraper

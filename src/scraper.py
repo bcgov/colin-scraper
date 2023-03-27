@@ -18,6 +18,7 @@ Defines PDF downloading and traversing through COLIN UI
 import aiohttp
 import asyncio
 import datetime
+import time
 
 from bs4 import BeautifulSoup as bs
 from selenium import webdriver
@@ -40,6 +41,7 @@ class Colin_scraper(webdriver.Remote):
         chrome_options = Options()
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--headless")
+        chrome_options.add_argument('--disable-dev-shm-usage')
         print('connecting to remote webdriver', flush=True)
         super(Colin_scraper, self).__init__(command_executor="http://selenium:4444/wd/hub",
                                             options=chrome_options, 

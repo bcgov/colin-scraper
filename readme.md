@@ -3,15 +3,27 @@ Web scraper to scrape COLIN-UI and download all the filing outputs of legacy bus
 
 # Prerequisites
 fill [.env](https://github.com/MatthewCai2002/env_templates/blob/master/.env), [configMap.yaml](https://github.com/MatthewCai2002/env_templates/blob/master/configMap.yaml), and [tnsnames.ora](https://github.com/MatthewCai2002/env_templates/blob/master/tnsnames.ora) files with environment variables  
-Python 10+
-linux environment to clone and run app
+Python 10+   
+linux environment to clone and run app   
+Gov VPN installed and running to connect to oracle DB   
+minikube for local kubernetes deployment
+
+# common errors
+VPN not running when running app or deployment   
+sometimes selenium-grid may throw a bind(): failed error, usually resolved by restarting computer
+
 
 # Running the app
 1. create config folder with a tnsnames.ora file with connection credentials to connect to COLIN Oracle DB
 2. place filled configMap.yaml file in scripts/deployment
-3. run make setup to install requirements and setup venv
-4. set command_executor in scraper.py to "http://selenium:4444/wd/hub"
-5. run docker compose up in root directory
+3. set command_executor in scraper.py to "http://selenium:4444/wd/hub"
+4. run `make image` in root directory
+5. run `docker compose up` in root directory
+6. colin-scraper-app will usually fail since it doesn't wait for a chrome node to be setup by selenium grid.   
+a workaround is to go into docker desktop and restart the container
+7. you should now see 2 dates followed by business numbers being printed
+8. if you want to input your own dates, you can update DATE_RANGE_START, DATE_RANGE_END, and FINAL_END_DATE env vars then   
+run `make image` again
 
 # Kubernetes Deployment
 1. start kubernetes cluster
