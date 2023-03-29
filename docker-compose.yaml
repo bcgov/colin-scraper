@@ -4,7 +4,7 @@
 version: '3'
 services:
   app:
-    image: matthewcai/colin-scraper
+    image: colin-scraper
     ports: 
       - 3000:3000
     working_dir: /app
