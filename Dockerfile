@@ -1,8 +1,5 @@
 FROM python:3.10.10-bullseye
 
-ARG TEST_ORG_NUM='BC0990639'
-ENV TEST_ORG_NUM=${TEST_ORG_NUM}
-
 RUN mkdir /app
 WORKDIR /app
 COPY . .

@@ -38,7 +38,7 @@ install-dev: ## Install local application
 # COMMANDS -- Docker Image                                                      #
 #################################################################################
 
-dev: ## push local image to DockerHub
+dev: ## build image and compose network
 	docker build -t colin-scraper .
 	docker compose up
 
