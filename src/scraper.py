@@ -43,7 +43,7 @@ class Colin_scraper(webdriver.Remote):
         chrome_options.add_argument("--headless")
         chrome_options.add_argument('--disable-dev-shm-usage')
         print('connecting to remote webdriver', flush=True)
-        super(Colin_scraper, self).__init__(command_executor="http://selenium:4444/wd/hub",
+        super(Colin_scraper, self).__init__(command_executor="http://selenium-hub:4444/wd/hub",
                                             options=chrome_options, 
                                             desired_capabilities=getattr(DesiredCapabilities, "CHROME"))
         print('connected to remote webdriver', flush=True)

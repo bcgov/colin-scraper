@@ -38,5 +38,11 @@ install-dev: ## Install local application
 # COMMANDS -- Docker Image                                                      #
 #################################################################################
 
-image: ## push local image to DockerHub
-	docker build -t matthewcai/colin-scraper .
+dev: ## push local image to DockerHub
+	docker build -t colin-scraper .
+	docker compose up
+
+local-deploy:
+	docker build -t colin-scraper .
+	bash scripts/start-selenium.sh
+	bash scripts/start-scraper.sh

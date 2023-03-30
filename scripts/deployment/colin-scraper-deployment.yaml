@@ -1,22 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata: 
-  name: colin-scraper
+  name: colin-scraper-deployment
   labels:
-    app: colin-scraper
+    app: colin-scraper-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: colin-scraper
+      app: colin-scraper-deployment
   template:
     metadata:
       labels:
-        app: colin-scraper
+        app: colin-scraper-deployment
     spec:
       containers:       
-      - name: colin-scraper
-        image: matthewcai/colin-scraper
+      - name: colin-scraper-deployment
+        image: colin-scraper
+        imagePullPolicy: Never
         env:
         - name: STAFF_USERNAME
           valueFrom:
