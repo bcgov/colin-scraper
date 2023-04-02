@@ -2,26 +2,27 @@
 Web scraper to scrape COLIN-UI and download all the filing outputs of legacy businesses and transfer them into LEAR  
 
 # Prerequisites
-fill [.env](https://github.com/MatthewCai2002/env_templates/blob/master/.env) in root directory, [configMap.yaml](https://github.com/MatthewCai2002/env_templates/blob/master/configMap.yaml) under scripts/deployments, and [tnsnames.ora](https://github.com/MatthewCai2002/env_templates/blob/master/tnsnames.ora) under config  
-create `test-outputs` folder in the root directory if not already present  
-linux environment to clone and run app, ie: WSL2 with ubuntu 20.04 installed   
-Gov VPN installed and running to connect to oracle DB   
-**Python 10+**  
-**minikube** for local kubernetes deployment
-**docker desktop** installed and enabled in WSL2, to manage containers  
+- fill [.env](https://github.com/MatthewCai2002/env_templates/blob/master/.env) in root directory, [configMap.yaml](https://github.com/MatthewCai2002/env_templates/blob/master/configMap.yaml) under scripts/deployments, and [tnsnames.ora](https://github.com/MatthewCai2002/env_templates/blob/master/tnsnames.ora) under config  
+- create `test-outputs` folder in the root directory if not already present  
+- linux environment to clone and run app, ie: WSL2 with ubuntu 20.04 installed   
+- Gov VPN installed and running to connect to oracle DB     
+- **minikube** for local kubernetes deployment
+- **docker desktop** installed and enabled in WSL2, to manage containers  
+- run `make setup` to setup venv with dev requirements  
 
 # common errors
-host not found errors, usually because VPN is not running when running app or deployment   
+ORA-12545: Connect failed because target host or object does not exist: usually because VPN is not running when running app or deployment   
 sometimes selenium-grid may throw a bind(): failed error, usually resolved by restarting computer
 
 # Running the app
 1. set command_executor in scraper.py to "http://selenium:4444/wd/hub"
-2. run `make dev` in root directory
+2. run `make dev` in root directory after which, this only needs to be run if the dockerfile is changed,  
+for normal development you can run `docker compose up` 
 3. colin-scraper-app will usually crash on startup since it doesn't wait for a chrome node to be setup by selenium grid.   
 a workaround is to go into docker desktop and restart the container
 4. you should now see 2 dates followed by business numbers being logged
 5. if you want to input your own dates, you can update DATE_RANGE_START, DATE_RANGE_END, and FINAL_END_DATE env vars then   
-run `make dev` again
+run `docker compose up` 
 
 # Kubernetes Deployment
 1. start kubernetes cluster ie: `minikube start`
