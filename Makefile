@@ -8,20 +8,20 @@ CURRENT_ABS_DIR:=$(patsubst %/,%,$(dir $(MKFILE_PATH)))
 setup: clean install install-dev ## Setup the project
 
 clean: clean-build clean-pyc ## Clean the project
-	rm -rf venv/
+	sudo rm -rf venv/
 
 clean-build: ## Clean build files
-	rm -fr build/
-	rm -fr dist/
-	rm -fr .eggs/
-	find . -name '*.egg-info' -exec rm -fr {} +
-	find . -name '*.egg' -exec rm -fr {} +
+	sudo rm -fr build/
+	sudo rm -fr dist/
+	sudo rm -fr .eggs/
+	find . -name '*.egg-info' -exec sudo rm -fr {} +
+	find . -name '*.egg' -exec sudo rm -fr {} +
 
 clean-pyc: ## Clean cache files
-	find . -name '*.pyc' -exec rm -f {} +
-	find . -name '*.pyo' -exec rm -f {} +
-	find . -name '*~' -exec rm -f {} +
-	find . -name '__pycache__' -exec rm -fr {} +
+	find . -name '*.pyc' -exec sudo rm -f {} +
+	find . -name '*.pyo' -exec sudo rm -f {} +
+	find . -name '*~' -exec sudo rm -f {} +
+	find . -name '__pycache__' -exec sudo rm -fr {} +
 
 install: clean ## Install python virtrual environment
 	test -f venv/bin/activate || python3 -m venv  $(CURRENT_ABS_DIR)/venv ;\

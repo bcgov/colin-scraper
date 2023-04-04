@@ -18,7 +18,6 @@ Defines PDF downloading and traversing through COLIN UI
 import aiohttp
 import asyncio
 import datetime
-import time
 
 from bs4 import BeautifulSoup as bs
 from selenium import webdriver
