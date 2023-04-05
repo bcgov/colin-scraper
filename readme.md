@@ -1,5 +1,7 @@
 # Overview
 Web scraper to scrape COLIN-UI and download all the filing outputs of legacy businesses and transfer them into LEAR  
+[RFC]()
+[design for LEAR side](https://app.zenhub.com/workspaces/relationships-team-space-61435c47e483c4000f08e9f6/issues/gh/bcgov/entity/15341)
 
 # Prerequisites
 - fill [.env](https://github.com/MatthewCai2002/env_templates/blob/master/.env) in root directory, [configMap.yaml](https://github.com/MatthewCai2002/env_templates/blob/master/configMap.yaml) under scripts/deployments, and [tnsnames.ora](https://github.com/MatthewCai2002/env_templates/blob/master/tnsnames.ora) under config  
