@@ -42,7 +42,7 @@ dev: ## build image and compose network
 	docker build -t colin-scraper .
 	docker compose up
 
-local-deploy:
+local-deploy: ## build local image and make deployment
 	docker build -t colin-scraper .
 	bash scripts/start-selenium.sh
 	bash scripts/start-scraper.sh
