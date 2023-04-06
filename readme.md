@@ -14,21 +14,22 @@ Web scraper to scrape COLIN-UI and download all the filing outputs of legacy bus
 
 # common errors
 - DPI-1047: Cannot locate a 64-bit Oracle Client library: Oracle instant client is not installed. Will encounter this if you're running the app outside of docker compose and you don't have the oracle instant client installed on your machine  
-fixed by running app through docker compose
+    - fixed by running app through docker compose
 - ORA-12545: Connect failed because target host or object does not exist: usually because VPN is not running when running app or deployment   
-fixed by turning on VPN and rerunning app
+    - fixed by turning on VPN and rerunning app
 - sometimes selenium-grid may throw a bind(): failed error  
-usually resolved by restarting computer
+    - usually resolved by restarting computer
 
 # Running the app
 1. set command_executor in scraper.py to http://selenium:4444/wd/hub
 2. run `make dev` in root directory after which, this only needs to be run if the dockerfile is changed,  
-for subsequent runs you can use `docker compose up` 
+    - for subsequent runs you can use `docker compose up` 
 3. colin-scraper-app will usually crash on startup since it doesn't wait for a chrome node to be setup by selenium grid.   
-a workaround is to go into docker desktop and restart the container
+    - a workaround is to go into docker desktop and restart the container
 4. you should now see 2 dates followed by business numbers being logged
-5. if you want to input dates, you can update DATE_RANGE_START, DATE_RANGE_END, and FINAL_END_DATE env vars then   
-run `docker compose up` 
+5. to input dates
+    - update DATE_RANGE_START, DATE_RANGE_END, and FINAL_END_DATE env vars
+    - run `docker compose up`
 
 # Kubernetes Deployment
 1. start kubernetes cluster ie: `minikube start`
